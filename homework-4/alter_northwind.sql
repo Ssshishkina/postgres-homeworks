@@ -8,7 +8,8 @@ ALTER TABLE products ADD CONSTRAINT chk_products_discontinued CHECK
 (discontinued IN (0, 1));
 
 -- 3. Создать новую таблицу, содержащую все продукты, снятые с продажи (discontinued = 1)
-SELECT * INTO removed_products FROM products WHERE discontinued = 1;
+SELECT product_name INTO removed_products FROM products
+WHERE discontinued = 1
 
 -- 4. Удалить из products товары, снятые с продажи (discontinued = 1)
 -- Для 4-го пункта может потребоваться удаление ограничения, связанного с foreign_key. Подумайте, как это можно решить, чтобы связь с таблицей order_details все же осталась.
@@ -19,12 +20,6 @@ DROP CONSTRAINT fk_order_details_products;
 -- Удаляем продукты, снятые с продажи:
 DELETE FROM products
 WHERE discontinued = 1;
-
--- Удаляем строки из таблицы "order_details", у которых значение столбца "product_id" не существует в столбце "product_id" таблицы "products":
-DELETE FROM order_details WHERE product_id NOT IN (SELECT product_id FROM products);
-
--- Удаляем строки из таблицы "orders", у которых значение столбца "order_id" не существует в столбце "order_id" таблицы "order_details":
-DELETE FROM orders WHERE order_id NOT IN (SELECT order_id FROM order_details);
 
 -- Возвращаем ограничение:
 ALTER TABLE order_details
